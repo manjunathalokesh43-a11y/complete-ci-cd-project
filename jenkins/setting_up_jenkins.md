@@ -86,6 +86,67 @@ eksctl create nodegroup --cluster=my-eks22 \
 ```
 
 * Open INBOUND TRAFFIC IN ADDITIONAL Security Group
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatbot-itkannadigaru
+  labels:
+    app: chatbot-itkannadigaru
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chatbot-itkannadigaru
+  template:
+    metadata:
+      labels:
+        app: chatbot-itkannadigaru
+    spec:
+      containers:
+        - name: chatbot
+          image: <YOUR_ECR_OR_DOCKERHUB_IMAGE>:<TAG>
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+```
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatbot-itkannadigaru-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: chatbot-itkannadigaru
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+```
+
+
+
 * Create Servcie account/ROLE/BIND-ROLE/Token
 
 ## Create Service Account, Role & Assign that role, And create a secret for Service Account and geenrate a Token
