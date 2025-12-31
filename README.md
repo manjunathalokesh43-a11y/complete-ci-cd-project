@@ -1,4 +1,4 @@
-# complete-cicd-project-microdegree
+# complete-cicd-project
 
 # CI-CD
 This is Simple ci-cd project
